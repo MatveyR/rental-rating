@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "462300643472",
+    "project_id": "rental-rating-eb959",
+    "storage_bucket": "rental-rating-eb959.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:462300643472:android:9d75a9cc2afcde65ed5815",
+        "android_client_info": {
+          "package_name": "com.insomnic.rental_rating"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUHattbdCknbJzkMr_GIBdlV-jyYN8PGk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
