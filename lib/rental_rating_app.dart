@@ -22,7 +22,7 @@ class _RentalRatingApp extends State<RentalRatingApp> {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'RentalRating',
-      theme: darkTheme,
+      //theme: darkTheme,
       routerConfig: _appRouter.config(),
     );
   }

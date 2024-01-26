@@ -1,4 +1,3 @@
-import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -57,7 +56,7 @@ class _SignUpScreen extends State<SignUpScreen> {
       print(e.code);
     }
 
-    navigator.push(HomeRoute());
+    navigator.push(const HomeRoute());
   }
 
   @override

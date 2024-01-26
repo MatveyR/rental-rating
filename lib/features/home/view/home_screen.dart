@@ -21,14 +21,14 @@ class HomeScreen extends StatelessWidget {
           IconButton(
             onPressed: () {
               if ((user == null)) {
-                AutoRouter.of(context).push(LoginRoute());
+                AutoRouter.of(context).push(const LoginRoute());
               } else {
-                AutoRouter.of(context).push(AccountRoute());
+                AutoRouter.of(context).push(const AccountRoute());
               }
             },
             icon: Icon(
               Icons.person,
-              color: (user == null) ? Colors.white : Colors.yellow,
+              color: (user == null) ? Colors.black : Colors.yellow,
             ),
           ),
         ],
