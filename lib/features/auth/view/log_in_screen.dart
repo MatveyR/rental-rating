@@ -47,10 +47,10 @@ class _LoginScreenState extends State<LoginScreen> {
     } on FirebaseAuthException catch (e) {
       print(e.code);
 
-      await showDialog(
+      bool res = await showDialog(
           context: context,
           builder: (context) {
-            return AlertDialog(
+            return const AlertDialog(
               title: Text("Ошибка!"),
               content: Text("Неверный логин или пароль"),
             );
@@ -59,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    navigator.push(const HomeRoute());
+    navigator.pushAndPopUntil(const HomeRoute(), predicate: (_) => false);
   }
 
   @override
@@ -118,7 +118,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 30),
               TextButton(
-                onPressed: () => AutoRouter.of(context).push(const SignUpRoute()),
+                onPressed: () => AutoRouter.of(context).pushAndPopUntil(
+                    SignUpRoute(),
+                    predicate: (_) => false),
                 child: const Text(
                   'Регистрация',
                   style: TextStyle(
@@ -128,7 +130,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               TextButton(
                 onPressed: () =>
-                    AutoRouter.of(context).pushNamed('/reset_password'),
+                    AutoRouter.of(context).pushAndPopUntil(
+                        HomeRoute(),
+                        predicate: (_) => false),
                 child: const Text('Сбросить пароль'),
               ),
             ],
