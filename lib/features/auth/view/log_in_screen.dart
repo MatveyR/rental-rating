@@ -68,6 +68,13 @@ class _LoginScreenState extends State<LoginScreen> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Войти'),
+        centerTitle: true,
+        leading: IconButton(
+            onPressed: () => AutoRouter.of(context).pushAndPopUntil(
+                HomeRoute(),
+                predicate: (_) => false),
+            icon: const Icon(Icons.arrow_back_ios_new)
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(30.0),
@@ -75,6 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
           key: formKey,
           child: Column(
             children: [
+              const SizedBox(height: 100),
               TextFormField(
                 keyboardType: TextInputType.emailAddress,
                 autocorrect: false,

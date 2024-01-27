@@ -64,7 +64,15 @@ class _SignUpScreen extends State<SignUpScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text('Зарегистрироваться'),
+        title: const Text('Регистрация'),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new),
+          onPressed: () => AutoRouter.of(context).pushAndPopUntil(
+              HomeRoute(),
+              predicate: (_) => false
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(30.0),
@@ -72,6 +80,7 @@ class _SignUpScreen extends State<SignUpScreen> {
           key: formKey,
           child: Column(
             children: [
+              const SizedBox(height: 100,),
               TextFormField(
                 keyboardType: TextInputType.emailAddress,
                 autocorrect: false,
@@ -138,7 +147,9 @@ class _SignUpScreen extends State<SignUpScreen> {
               ),
               const SizedBox(height: 30),
               TextButton(
-                onPressed: () => context.router.pop(),
+                onPressed: () => AutoRouter.of(context).pushAndPopUntil(
+                    LoginRoute(),
+                    predicate: (_) => false),
                 child: const Text(
                   'Войти',
                   style: TextStyle(
