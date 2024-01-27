@@ -19,7 +19,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
     await FirebaseAuth.instance.signOut();
 
-    navigator.popUntilRoot();
+    navigator.pushAndPopUntil(HomeRoute(), predicate: (_) => false);
   }
 
   @override
