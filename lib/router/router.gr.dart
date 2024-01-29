@@ -1,3 +1,12 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+// **************************************************************************
+// AutoRouterGenerator
+// **************************************************************************
+
+// ignore_for_file: type=lint
+// coverage:ignore-file
+
 part of 'router.dart';
 
 abstract class _$AppRouter extends RootStackRouter {
@@ -28,6 +37,12 @@ abstract class _$AppRouter extends RootStackRouter {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const SignUpScreen(),
+      );
+    },
+    VerifyEmailRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const VerifyEmailScreen(),
       );
     },
   };
@@ -85,6 +100,20 @@ class SignUpRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'SignUpRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [VerifyEmailScreen]
+class VerifyEmailRoute extends PageRouteInfo<void> {
+  const VerifyEmailRoute({List<PageRouteInfo>? children})
+      : super(
+          VerifyEmailRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'VerifyEmailRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

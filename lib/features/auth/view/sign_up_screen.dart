@@ -54,9 +54,10 @@ class _SignUpScreen extends State<SignUpScreen> {
       );
     } on FirebaseAuthException catch (e) {
       print(e.code);
+      navigator.pushAndPopUntil(HomeRoute(), predicate: (_) => false);
     }
 
-    navigator.pushAndPopUntil(HomeRoute(), predicate: (_) => false);
+    navigator.pushAndPopUntil(VerifyEmailRoute(), predicate: (_) => false);
   }
 
   @override

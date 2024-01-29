@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'package:auto_route/annotations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rental_rating/features/home/home.dart';
 
+@RoutePage()
 class VerifyEmailScreen extends StatefulWidget {
   const VerifyEmailScreen({super.key});
 

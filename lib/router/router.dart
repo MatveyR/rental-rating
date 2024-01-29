@@ -13,6 +13,7 @@ class AppRouter extends _$AppRouter {
     AutoRoute(page: HomeRoute.page, path: "/"),
     AutoRoute(page: LoginRoute.page),
     AutoRoute(page: SignUpRoute.page),
-    AutoRoute(page: AccountRoute.page)
+    AutoRoute(page: AccountRoute.page),
+    AutoRoute(page: VerifyEmailRoute.page)
   ];
 }
