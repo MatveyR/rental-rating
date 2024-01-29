@@ -56,7 +56,7 @@ class _SignUpScreen extends State<SignUpScreen> {
       print(e.code);
     }
 
-    navigator.push(const HomeRoute());
+    navigator.pushAndPopUntil(HomeRoute(), predicate: (_) => false);
   }
 
   @override
