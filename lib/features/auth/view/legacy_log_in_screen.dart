@@ -4,28 +4,23 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rental_rating/router/router.dart';
 
-
-@RoutePage()
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreen();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _SignUpScreen extends State<SignUpScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   bool isHiddenPassword = true;
   TextEditingController emailTextInputController = TextEditingController();
   TextEditingController passwordTextInputController = TextEditingController();
-  TextEditingController passwordTextRepeatInputController =
-  TextEditingController();
   final formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
     emailTextInputController.dispose();
     passwordTextInputController.dispose();
-    passwordTextRepeatInputController.dispose();
 
     super.dispose();
   }
@@ -36,39 +31,33 @@ class _SignUpScreen extends State<SignUpScreen> {
     });
   }
 
-  Future<void> signUp() async {
+  Future<void> login() async {
     final navigator = AutoRouter.of(context);
 
     final isValid = formKey.currentState!.validate();
     if (!isValid) return;
 
-    if (passwordTextInputController.text !=
-        passwordTextRepeatInputController.text) {
-      print("Пароли должны совпадать");
-      return;
-    }
-
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailTextInputController.text.trim(),
         password: passwordTextInputController.text.trim(),
       );
-      await FirebaseAuth.instance.signOut();
     } on FirebaseAuthException catch (e) {
-        print(e.code);
-        navigator.pushAndPopUntil(HomeRoute(), predicate: (_) => false);
+      print(e.code);
+
+      bool res = await showDialog(
+          context: context,
+          builder: (context) {
+            return const AlertDialog(
+              title: Text("Ошибка!"),
+              content: Text("Неверный логин или пароль"),
+            );
+          });
+
+      return;
     }
 
-    navigator.pushAndPopUntil(LoginRoute(), predicate: (_) => false);
-
-    await showDialog(
-        context: context,
-        builder: (context) {
-          return const AlertDialog(
-            title: Text("Отлично!"),
-            content: Text("Войдите в аккаунт и подтвердите почту, чтобы продолжить работу"),
-          );
-        });
+    navigator.pushAndPopUntil(const HomeRoute(), predicate: (_) => false);
   }
 
   @override
@@ -76,14 +65,13 @@ class _SignUpScreen extends State<SignUpScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text('Регистрация'),
+        title: const Text('Войти'),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new),
-          onPressed: () => AutoRouter.of(context).pushAndPopUntil(
-              HomeRoute(),
-              predicate: (_) => false
-          ),
+            onPressed: () => AutoRouter.of(context).pushAndPopUntil(
+                HomeRoute(),
+                predicate: (_) => false),
+            icon: const Icon(Icons.arrow_back_ios_new)
         ),
       ),
       body: Padding(
@@ -92,7 +80,7 @@ class _SignUpScreen extends State<SignUpScreen> {
           key: formKey,
           child: Column(
             children: [
-              const SizedBox(height: 100,),
+              const SizedBox(height: 100),
               TextFormField(
                 keyboardType: TextInputType.emailAddress,
                 autocorrect: false,
@@ -111,10 +99,10 @@ class _SignUpScreen extends State<SignUpScreen> {
                 autocorrect: false,
                 controller: passwordTextInputController,
                 obscureText: isHiddenPassword,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (value) => value != null && value.length < 6
                     ? 'Минимум 6 символов'
                     : null,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   hintText: 'Введите пароль',
@@ -130,44 +118,28 @@ class _SignUpScreen extends State<SignUpScreen> {
                 ),
               ),
               const SizedBox(height: 30),
-              TextFormField(
-                autocorrect: false,
-                controller: passwordTextRepeatInputController,
-                obscureText: isHiddenPassword,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) => value != null && value.length < 6
-                    ? 'Минимум 6 символов'
-                    : null,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  hintText: 'Введите пароль еще раз',
-                  suffix: InkWell(
-                    onTap: togglePasswordView,
-                    child: Icon(
-                      isHiddenPassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
               ElevatedButton(
-                onPressed: signUp,
-                child: const Center(child: Text('Регистрация')),
+                onPressed: login,
+                child: const Center(child: Text('Войти')),
               ),
               const SizedBox(height: 30),
               TextButton(
                 onPressed: () => AutoRouter.of(context).pushAndPopUntil(
-                    LoginRoute(),
+                    SignUpRoute(),
                     predicate: (_) => false),
                 child: const Text(
-                  'Войти',
+                  'Регистрация',
                   style: TextStyle(
                     decoration: TextDecoration.underline,
                   ),
                 ),
+              ),
+              TextButton(
+                onPressed: () =>
+                    AutoRouter.of(context).pushAndPopUntil(
+                        HomeRoute(),
+                        predicate: (_) => false),
+                child: const Text('Сбросить пароль'),
               ),
             ],
           ),

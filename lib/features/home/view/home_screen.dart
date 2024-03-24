@@ -13,10 +13,17 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
 
+    if (user != null && !user.emailVerified) {
+      AutoRouter.of(context).pushAndPopUntil(
+          const VerifyEmailRoute(),
+          predicate: (_) => false);
+    }
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Главная страница'),
+        centerTitle: true,
         actions: [
           IconButton(
             onPressed: () {

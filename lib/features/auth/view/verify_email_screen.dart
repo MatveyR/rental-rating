@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rental_rating/features/home/home.dart';
+import 'package:rental_rating/router/router.dart';
 
 @RoutePage()
 class VerifyEmailScreen extends StatefulWidget {
@@ -46,8 +47,6 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
     });
 
-    print(isEmailVerified);
-
     if (isEmailVerified) timer?.cancel();
   }
 
@@ -57,7 +56,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       await user.sendEmailVerification();
 
       setState(() => canResendEmail = false);
-      await Future.delayed(const Duration(seconds: 5));
+      await Future.delayed(const Duration(seconds: 30));
 
       setState(() => canResendEmail = true);
     } catch (e) {
@@ -81,7 +80,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       : Scaffold(
     resizeToAvoidBottomInset: false,
     appBar: AppBar(
-      title: const Text('Верификация Email адреса'),
+      title: const Text('Подтверждение почты'),
+      centerTitle: true,
     ),
     body: SafeArea(
       child: Padding(
@@ -94,6 +94,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
               style: TextStyle(
                 fontSize: 20,
               ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
             ElevatedButton.icon(
@@ -105,7 +106,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
             TextButton(
               onPressed: () async {
                 timer?.cancel();
-                await FirebaseAuth.instance.currentUser!.delete();
+                await FirebaseAuth.instance.signOut();
+                AutoRouter.of(context).pushAndPopUntil(
+                    HomeRoute(),
+                    predicate: (_) => false
+                );
               },
               child: const Text(
                 'Отменить',

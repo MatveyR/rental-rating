@@ -1,9 +1,9 @@
-import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:rental_rating/router/router.dart';
+import 'package:rental_rating/features/auth/auth.dart';
+import '../../../router/router.dart';
 
 @RoutePage()
 class LoginScreen extends StatefulWidget {
@@ -15,22 +15,16 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isHiddenPassword = true;
-  TextEditingController emailTextInputController = TextEditingController();
+  TextEditingController loginTextInputController = TextEditingController();
   TextEditingController passwordTextInputController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
-    emailTextInputController.dispose();
+    loginTextInputController.dispose();
     passwordTextInputController.dispose();
 
     super.dispose();
-  }
-
-  void togglePasswordView() {
-    setState(() {
-      isHiddenPassword = !isHiddenPassword;
-    });
   }
 
   Future<void> login() async {
@@ -41,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailTextInputController.text.trim(),
+        email: loginTextInputController.text.trim(),
         password: passwordTextInputController.text.trim(),
       );
     } on FirebaseAuthException catch (e) {
@@ -65,88 +59,133 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text('Войти'),
-        centerTitle: true,
         leading: IconButton(
-            onPressed: () => AutoRouter.of(context).pushAndPopUntil(
-                HomeRoute(),
-                predicate: (_) => false),
-            icon: const Icon(Icons.arrow_back_ios_new)
+          onPressed: () => AutoRouter.of(context).pushAndPopUntil(
+            const HomeRoute(),
+            predicate: (_) => false,
+          ),
+          icon: Image.asset('assets/ArrowLeft.png'),
         ),
+        backgroundColor: const Color.fromARGB(255, 246, 247, 255),
+        scrolledUnderElevation: 0.0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(30.0),
-        child: Form(
-          key: formKey,
-          child: Column(
-            children: [
-              const SizedBox(height: 100),
-              TextFormField(
-                keyboardType: TextInputType.emailAddress,
-                autocorrect: false,
-                controller: emailTextInputController,
-                validator: (email) =>
-                email != null && !EmailValidator.validate(email)
-                    ? 'Введите правильный Email'
-                    : null,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Введите Email',
-                ),
-              ),
-              const SizedBox(height: 30),
-              TextFormField(
-                autocorrect: false,
-                controller: passwordTextInputController,
-                obscureText: isHiddenPassword,
-                validator: (value) => value != null && value.length < 6
-                    ? 'Минимум 6 символов'
-                    : null,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  hintText: 'Введите пароль',
-                  suffix: InkWell(
-                    onTap: togglePasswordView,
-                    child: Icon(
-                      isHiddenPassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: Colors.white,
+      backgroundColor: const Color.fromARGB(255, 246, 247, 255),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 76, 24, 0),
+              child: Column(
+                children: [
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: const TextSpan(
+                      style: TextStyle(
+                        fontSize: 24.0,
+                        color: Color.fromARGB(255, 20, 25, 69),
+                        fontFamily: 'Inter',
+                      ),
+                      children: <TextSpan>[
+                        TextSpan(text: "Добро пожаловать\nв "),
+                        TextSpan(
+                          text: "HomeHunt 👋",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: login,
-                child: const Center(child: Text('Войти')),
-              ),
-              const SizedBox(height: 30),
-              TextButton(
-                onPressed: () => AutoRouter.of(context).pushAndPopUntil(
-                    SignUpRoute(),
-                    predicate: (_) => false),
-                child: const Text(
-                  'Регистрация',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
+                  const SizedBox(height: 48),
+                  Form(
+                    key: formKey,
+                    child: Column(
+                      children: [
+                        LoginFormField(
+                          hintText: "Телефон / Электронная почта",
+                          controller: loginTextInputController,
+                        ),
+                        const SizedBox(height: 8),
+                        PasswordFormField(
+                          hintText: "Пароль",
+                          controller: passwordTextInputController,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 32),
+                  LongElevatedButton(
+                    text: "Войти",
+                    onPressed: login,
+                  ),
+                  LongTextButton(
+                    text: "Зарегистрироваться",
+                    onPressed: () => AutoRouter.of(context).pushAndPopUntil(
+                      const SignUpRoute(),
+                      predicate: (_) => false,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  LongGoogleButton(
+                    onPressed: () => (),
+                  ),
+                  const SizedBox(height: 32),
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: const TextStyle(
+                        fontSize: 14.0,
+                        color: Color.fromARGB(163, 20, 25, 69),
+                        fontFamily: 'Inter',
+                      ),
+                      children: <TextSpan>[
+                        const TextSpan(
+                          text: "By creating an account or logging in,\nyou agree to our ",
+                        ),
+                        TextSpan(
+                          text: "privacy policy",
+                          style: const TextStyle(
+                            decoration: TextDecoration.underline,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return const AlertDialog(
+                                    title: Text("Error"),
+                                    content: Text("The privacy policy has not been added yet"),
+                                  );
+                                },
+                              );
+                            },
+                        ),
+                        const TextSpan(text: "."),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              TextButton(
-                onPressed: () =>
-                    AutoRouter.of(context).pushAndPopUntil(
-                        HomeRoute(),
-                        predicate: (_) => false),
-                child: const Text('Сбросить пароль'),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: 230,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Positioned(
+                    left: -10,
+                    bottom: 0,
+                    child: Image.asset(
+                      'assets/Background.png',
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            )
+          ]
         ),
-      ),
+      )
     );
   }
 }
