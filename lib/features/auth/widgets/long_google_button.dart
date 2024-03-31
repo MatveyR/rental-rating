@@ -22,9 +22,9 @@ class LongGoogleButton extends StatelessWidget {
                 minimumSize: MaterialStateProperty.all<Size>(
                   const Size(double.infinity, 44),
                 ),
-                elevation: const MaterialStatePropertyAll<double>(5),
+                elevation: const MaterialStatePropertyAll<double>(2),
                 shadowColor: const MaterialStatePropertyAll<Color>(
-                  Color.fromARGB(60, 48, 67, 237)
+                  Color.fromARGB(255, 48, 67, 237)
                 )
             ),
             label: const Text(

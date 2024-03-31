@@ -108,7 +108,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                 timer?.cancel();
                 await FirebaseAuth.instance.signOut();
                 AutoRouter.of(context).pushAndPopUntil(
-                    HomeRoute(),
+                    const HomeRoute(),
                     predicate: (_) => false
                 );
               },

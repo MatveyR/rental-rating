@@ -18,8 +18,7 @@ class _AccountScreenState extends State<AccountScreen> {
     final navigator = AutoRouter.of(context);
 
     await FirebaseAuth.instance.signOut();
-
-    navigator.pushAndPopUntil(HomeRoute(), predicate: (_) => false);
+    navigator.pushAndPopUntil(const HomeRoute(), predicate: (_) => false);
   }
 
   @override
@@ -29,16 +28,13 @@ class _AccountScreenState extends State<AccountScreen> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            AutoRouter.of(context).pushAndPopUntil(
-                HomeRoute(),
-                predicate: (_) => false
-            );
+            AutoRouter.of(context)
+                .pushAndPopUntil(const HomeRoute(), predicate: (_) => false);
           },
-          icon: const Icon(
-            Icons.arrow_back_ios, // add custom icons also
-          ),
+          icon: Image.asset("assets/ArrowLeft.png"),
         ),
         title: const Text('Аккаунт'),
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -56,6 +52,11 @@ class _AccountScreenState extends State<AccountScreen> {
               onPressed: () => signOut(),
               child: const Text('Выйти'),
             ),
+            ElevatedButton(
+                onPressed: () => AutoRouter.of(context).pushAndPopUntil(
+                    const PublishAdvertisementRoute(),
+                    predicate: (_) => false),
+                child: const Text("Опубликовать объявление"))
           ],
         ),
       ),

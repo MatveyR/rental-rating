@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rental_rating/router/router.dart';
 import 'package:rental_rating/theme/appTheme.dart';
@@ -22,7 +21,7 @@ class _RentalRatingApp extends State<RentalRatingApp> {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'RentalRating',
-      //theme: darkTheme,
+      theme: appTheme,
       routerConfig: _appRouter.config(),
     );
   }
