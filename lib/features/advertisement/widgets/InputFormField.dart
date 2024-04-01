@@ -13,6 +13,10 @@ class InputFormField extends StatelessWidget {
       controller: controller,
       autocorrect: false,
       keyboardType: TextInputType.text,
+      expands: true,
+      maxLines: null,
+      textAlign: TextAlign.left,
+      textAlignVertical: TextAlignVertical.top,
       decoration: InputDecoration(
           contentPadding:
           const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
