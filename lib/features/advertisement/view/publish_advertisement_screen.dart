@@ -1,9 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:rental_rating/features/advertisement/widgets/InputFormField.dart';
-import 'package:rental_rating/features/advertisement/widgets/OptionButton.dart';
+import 'package:rental_rating/features/advertisement/advertisement.dart';
+import 'package:rental_rating/features/auth/services/services.dart';
 import 'package:rental_rating/router/router.dart';
+
+import '../../auth/widgets/bottom_dialog.dart';
 
 @RoutePage()
 class PublishAdvertisementScreen extends StatefulWidget {
@@ -14,11 +17,16 @@ class PublishAdvertisementScreen extends StatefulWidget {
 }
 
 class _PublishAdvertisementScreen extends State<PublishAdvertisementScreen> {
+  final storageService = CloudStorageService();
+  final user = FirebaseAuth.instance.currentUser;
+
   final formKey = GlobalKey<FormState>();
   int _selectedButtonIndex = 0;
   int _roomAmount = 0;
   bool _haveFee = true;
   bool _servicePaymentIncluded = true;
+  String imageTitle = "";
+  String imageUrl = "";
 
   TextEditingController addressController = TextEditingController();
   TextEditingController priceController = TextEditingController();
@@ -31,33 +39,31 @@ class _PublishAdvertisementScreen extends State<PublishAdvertisementScreen> {
   TextEditingController termController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
 
-
   void publishAdvertisement() {
     try {
       CollectionReference advertisements =
       FirebaseFirestore.instance.collection('advertisements');
 
-      advertisements.add(
-          {
-            'adres' : addressController.text.trim(),
-            'type' : _selectedButtonIndex,
-            'rooms' : _roomAmount,
-            'price' : priceController.text.trim(),
-            'square' : squareController.text.trim(),
-            'floor' : floorController.text.trim(),
-            'maxFloor' : maxFloorController.text.trim(),
-            'year' : yearController.text.trim(),
-            'deposit' : descriptionController.text.trim(),
-            'fee' : _haveFee ? feeController.text.trim() : 0,
-            'term' : termController.text.trim(),
-            'servicePayment' : _servicePaymentIncluded,
-            'description' : descriptionController.text.trim()
-          }
-      );
+      advertisements.add({
+        'address': addressController.text.trim(),
+        'type': _selectedButtonIndex,
+        'rooms': _roomAmount,
+        'price': int.parse(priceController.text.trim()),
+        'square': int.parse(squareController.text.trim()),
+        'floor': int.parse(floorController.text.trim()),
+        'maxFloor': int.parse(maxFloorController.text.trim()),
+        'year': int.parse(yearController.text.trim()),
+        'deposit': int.parse(depositController.text.trim()),
+        'fee': _haveFee ? int.parse(feeController.text.trim()) : 0,
+        'term': int.parse(termController.text.trim()),
+        'servicePayment': _servicePaymentIncluded,
+        'description': descriptionController.text.trim(),
+        'imageUrl': imageUrl,
+        'imageTitle': imageTitle
+      });
     } catch (e) {
       print("Unhandled exception while trying to get advertisement collection");
     }
-
   }
 
   void _handleServicePayment(bool isInclude) {
@@ -94,8 +100,10 @@ class _PublishAdvertisementScreen extends State<PublishAdvertisementScreen> {
           centerTitle: true,
           leading: IconButton(
             icon: Image.asset("assets/ArrowLeft.png"),
-            onPressed: () => AutoRouter.of(context)
-                .pushAndPopUntil(const AccountRoute(), predicate: (_) => false),
+            onPressed: () =>
+                AutoRouter.of(context)
+                    .pushAndPopUntil(
+                    const AccountRoute(), predicate: (_) => false),
           )),
       body: SingleChildScrollView(
         child: Padding(
@@ -654,7 +662,17 @@ class _PublishAdvertisementScreen extends State<PublishAdvertisementScreen> {
                     textAlign: TextAlign.right,
                   )),
               const SizedBox(height: 16),
-              Image.asset("assets/ImportPhoto.png"),
+              GestureDetector(
+                  onTap: () async {
+                    final imageFile = await ImageSelector.selectImage();
+                    if (imageFile != null) {
+                      final res = await storageService.uploadImage(
+                          image: imageFile, title: "");
+                      imageUrl = res!.imageUrl;
+                      imageTitle = res.imageFileName;
+                    }
+                  },
+                  child: Image.asset("assets/ImportPhoto.png")),
               const SizedBox(height: 40),
               const Align(
                   alignment: Alignment.bottomLeft,
@@ -680,16 +698,29 @@ class _PublishAdvertisementScreen extends State<PublishAdvertisementScreen> {
                 children: [
                   Expanded(
                       child: ElevatedButton(
-                          onPressed: publishAdvertisement,
+                          onPressed: () {
+                            publishAdvertisement();
+                            BottomDialog.showBottomDialog(
+                                height: 350,
+                                context: context,
+                                text:
+                                "Объявление успешно добавлено!");
+                            Future.delayed(const Duration(seconds: 5), () {
+                              AutoRouter.of(context).pushAndPopUntil(
+                                const HomeRoute(),
+                                predicate: (_) => false,
+                              );
+                            });
+                          },
                           style: ButtonStyle(
                               backgroundColor:
-                                  const MaterialStatePropertyAll<Color>(
-                                      Color.fromARGB(255, 48, 67, 237)),
+                              const MaterialStatePropertyAll<Color>(
+                                  Color.fromARGB(255, 48, 67, 237)),
                               shape: MaterialStatePropertyAll<
-                                      RoundedRectangleBorder>(
+                                  RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
                                       borderRadius:
-                                          BorderRadius.circular(8.0)))),
+                                      BorderRadius.circular(8.0)))),
                           child: const Text(
                             "Опубликовать",
                             style: TextStyle(color: Colors.white),

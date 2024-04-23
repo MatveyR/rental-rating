@@ -31,7 +31,7 @@ class _AccountScreenState extends State<AccountScreen> {
             AutoRouter.of(context)
                 .pushAndPopUntil(const HomeRoute(), predicate: (_) => false);
           },
-          icon: Image.asset("assets/ArrowLeft.png"),
+          icon: Image.asset("assets/ArrowLeft.png", scale: 3,),
         ),
         title: const Text('Аккаунт'),
         centerTitle: true,
@@ -56,7 +56,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 onPressed: () => AutoRouter.of(context).pushAndPopUntil(
                     const PublishAdvertisementRoute(),
                     predicate: (_) => false),
-                child: const Text("Опубликовать объявление"))
+                child: const Text("Опубликовать объявление")),
           ],
         ),
       ),

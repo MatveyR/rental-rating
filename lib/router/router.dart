@@ -4,6 +4,8 @@ import 'package:rental_rating/features/advertisement/advertisement.dart';
 import 'package:rental_rating/features/auth/auth.dart';
 import 'package:rental_rating/features/home/home.dart';
 import 'package:rental_rating/router/guards/login_guard.dart';
+import 'package:rental_rating/repositories/advertisements/models/advertisement.dart';
+import 'package:flutter/material.dart';
 
 part 'router.gr.dart';
 
@@ -17,6 +19,8 @@ class AppRouter extends _$AppRouter {
     AutoRoute(page: SignUpRoute.page),
     AutoRoute(page: AccountRoute.page, guards: [LoginGuard()]),
     AutoRoute(page: VerifyEmailRoute.page, guards: [LoginGuard()]),
-    AutoRoute(page: PublishAdvertisementRoute.page)
+    AutoRoute(page: PublishAdvertisementRoute.page, guards: [LoginGuard()]),
+    AutoRoute(page: EmailSignUpRoute.page),
+    AutoRoute(page: AdvertisementRoute.page)
   ];
 }

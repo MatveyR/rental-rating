@@ -1,24 +1,23 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:rental_rating/features/auth/auth.dart';
 import 'package:rental_rating/router/router.dart';
-
 
 @RoutePage()
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreen();
+  State<SignUpScreen> createState() => _SignUpState();
 }
 
-class _SignUpScreen extends State<SignUpScreen> {
+class _SignUpState extends State<SignUpScreen> {
   bool isHiddenPassword = true;
   TextEditingController emailTextInputController = TextEditingController();
   TextEditingController passwordTextInputController = TextEditingController();
   TextEditingController passwordTextRepeatInputController =
-  TextEditingController();
+      TextEditingController();
   final formKey = GlobalKey<FormState>();
 
   @override
@@ -44,7 +43,7 @@ class _SignUpScreen extends State<SignUpScreen> {
 
     if (passwordTextInputController.text !=
         passwordTextRepeatInputController.text) {
-      print("Пароли должны совпадать");
+      debugPrint("Пароли должны совпадать");
       return;
     }
 
@@ -55,124 +54,71 @@ class _SignUpScreen extends State<SignUpScreen> {
       );
       await FirebaseAuth.instance.signOut();
     } on FirebaseAuthException catch (e) {
-        print(e.code);
-        navigator.pushAndPopUntil(HomeRoute(), predicate: (_) => false);
+      print(e.code);
+      navigator.pushAndPopUntil(HomeRoute(), predicate: (_) => false);
     }
 
     navigator.pushAndPopUntil(LoginRoute(), predicate: (_) => false);
-
-    await showDialog(
-        context: context,
-        builder: (context) {
-          return const AlertDialog(
-            title: Text("Отлично!"),
-            content: Text("Войдите в аккаунт и подтвердите почту, чтобы продолжить работу"),
-          );
-        });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: const Text('Регистрация'),
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new),
-          onPressed: () => AutoRouter.of(context).pushAndPopUntil(
-              HomeRoute(),
-              predicate: (_) => false
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          title: const Text('Регистрация'),
+          centerTitle: true,
+          leading: IconButton(
+            icon: Image.asset(
+              'assets/ArrowLeft.png',
+              scale: 3,
+            ),
+            onPressed: () => AutoRouter.of(context)
+                .pushAndPopUntil(const LoginRoute(), predicate: (_) => false),
           ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(30.0),
-        child: Form(
-          key: formKey,
+        body: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 40, 24, 0),
           child: Column(
             children: [
-              const SizedBox(height: 100,),
-              TextFormField(
-                keyboardType: TextInputType.emailAddress,
-                autocorrect: false,
-                controller: emailTextInputController,
-                validator: (email) =>
-                email != null && !EmailValidator.validate(email)
-                    ? 'Введите правильный Email'
-                    : null,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Введите Email',
-                ),
+              LongGoogleButton(
+                onPressed: () async {
+                  FirebaseAuthService service = FirebaseAuthService();
+                  try {
+                    await service.signInWithGoogle();
+                    AutoRouter.of(context).pushAndPopUntil(
+                      const HomeRoute(),
+                      predicate: (_) => false,
+                    );
+                  } catch (e) {
+                    if (e is FirebaseAuthException) {
+                      debugPrint(e.message);
+                    }
+                  }
+                },
               ),
-              const SizedBox(height: 30),
-              TextFormField(
-                autocorrect: false,
-                controller: passwordTextInputController,
-                obscureText: isHiddenPassword,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) => value != null && value.length < 6
-                    ? 'Минимум 6 символов'
-                    : null,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  hintText: 'Введите пароль',
-                  suffix: InkWell(
-                    onTap: togglePasswordView,
-                    child: Icon(
-                      isHiddenPassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-              TextFormField(
-                autocorrect: false,
-                controller: passwordTextRepeatInputController,
-                obscureText: isHiddenPassword,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) => value != null && value.length < 6
-                    ? 'Минимум 6 символов'
-                    : null,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  hintText: 'Введите пароль еще раз',
-                  suffix: InkWell(
-                    onTap: togglePasswordView,
-                    child: Icon(
-                      isHiddenPassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: signUp,
-                child: const Center(child: Text('Регистрация')),
-              ),
-              const SizedBox(height: 30),
-              TextButton(
+              const SizedBox(height: 32),
+              Image.asset("assets/Or.png", scale: 3),
+              const SizedBox(height:32),
+              LongElevatedButton(
+                color: const Color.fromARGB(255, 48, 67, 237),
+                text: "Регистрация по номеру телефона",
                 onPressed: () => AutoRouter.of(context).pushAndPopUntil(
-                    LoginRoute(),
+                    const HomeRoute(),
                     predicate: (_) => false),
-                child: const Text(
-                  'Войти',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
               ),
+              const SizedBox(height: 32),
+              Image.asset("assets/Or.png", scale: 3),
+              const SizedBox(height: 32),
+              LongElevatedButton(
+                color: const Color.fromARGB(255, 48, 67, 237),
+                text: "Регистрация по e-mail",
+                onPressed: () => AutoRouter.of(context).pushAndPopUntil(
+                    const EmailSignUpRoute(),
+                    predicate: (_) => false),
+              )
             ],
           ),
-        ),
-      ),
-    );
+        ));
   }
 }

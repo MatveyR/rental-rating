@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class PasswordFormField extends StatefulWidget {
   final String? hintText;
   final TextEditingController? controller;
+  Function(String)? change;
 
-  const PasswordFormField({Key? key, this.hintText, this.controller})
+  PasswordFormField({Key? key, this.hintText, this.controller, this.change})
       : super(key: key);
 
   @override
@@ -29,6 +30,7 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
           autocorrect: false,
           controller: widget.controller,
           obscureText: isHiddenPassword,
+          onChanged: widget.change,
           decoration: InputDecoration(
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
@@ -50,9 +52,11 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
             onTap: togglePasswordView,
             child: Padding(
               padding: const EdgeInsets.only(right: 12.0),
-              child: Icon(
-                isHiddenPassword ? Icons.visibility_off : Icons.visibility,
-                color: const Color.fromARGB(82, 20, 25, 69),
+              child: Image.asset(
+                isHiddenPassword
+                    ? 'assets/PasswordHide.png'
+                    : 'assets/PasswordNotHide.png',
+                scale: 3,
               ),
             ),
           ),
